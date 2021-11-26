@@ -10,6 +10,7 @@ public class LipsManager : MonoBehaviour
     public bool isCollactable;
     public GameObject panel;
     public Animator anim;
+  
 
     private GameObject LipsColor1;
     private GameObject LipsColor2;
@@ -21,6 +22,7 @@ public class LipsManager : MonoBehaviour
     void Start()
     {
         isCollactable = true;
+    
         LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
         LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
         LipsColor3 = transform.GetChild(4).GetChild(3).gameObject;
@@ -51,14 +53,22 @@ public class LipsManager : MonoBehaviour
         {
             if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
             {
-                GameManager.Instance.linkedPlayers.Add(collision.gameObject.transform);
-                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.linkedPlayers.Count * 2f);
-                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.linkedPlayers.Count * 0.1f;
+                GameManager.Instance.LinkedPlayers.Add(collision.gameObject.transform);
+                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 2f);
+                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
                 collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
                
                 anim.SetBool("run", true);
             }
 
+        }
+        /*if (collision.gameObject.tag == "Enemey")
+        {
+            GameManager.Instance.detachFromBody(this.transform);
+        }*/
+        if (collision.gameObject.tag == "Wall")
+        {
+            GameManager.Instance.DestroyObject(this.transform);
         }
 
     }
@@ -68,7 +78,7 @@ public class LipsManager : MonoBehaviour
 
         if (other.gameObject.tag == "Gate")
         {
-            Debug.Log("test");
+           
 
             if (LipsColor1.activeSelf)
             {
@@ -92,6 +102,7 @@ public class LipsManager : MonoBehaviour
             }
         }
     }
+   
 
 
 

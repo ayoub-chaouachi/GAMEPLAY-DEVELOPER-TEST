@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Lips
   - Gate
+  - Enemey
+  - Wall
   layers:
   - Default
   - TransparentFX

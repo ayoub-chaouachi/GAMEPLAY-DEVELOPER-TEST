@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     Rigidbody rg;
     public Animator anim;
     public GameObject panel;
+    public static PlayerManager instance;
     
   
 
@@ -21,7 +22,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         rg = GetComponent<Rigidbody>();
-        
+        instance = this;
 
         LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
         LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
@@ -32,24 +33,51 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-       
+#if UNITY_EDITOR
         PlayerInput();
+#endif
+#if PLATFORM_ANDROID
+        Debug.Log("aaa");
+        PlayerInputAd();
+#endif
     }
     public void PlayerInput()
     {
+
         if (!IsHitting)
         {
-            rg.AddForce(Vector3.forward * 50 * Time.deltaTime,ForceMode.Force);
+            rg.AddForce(Vector3.forward * 50 * Time.deltaTime,ForceMode.Acceleration);
         }
         horizontal = Input.GetAxisRaw("Horizontal");
-        if(horizontal<0)
+        if(horizontal<0 && transform.position.x>-7f)
         {
             transform.Translate(Vector3.right * speed * Time.deltaTime);
         }
-        if(horizontal>0 )
+        if(horizontal>0 && transform.position.x<-0.6f )
         {
             transform.Translate(Vector3.left * speed * Time.deltaTime);
+        }
+    }
+    public void PlayerInputAd()
+    {
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    if(touch.position.x< Screen.width/2 && transform.position.x > -7f)
+                    {
+                        transform.Translate(Vector3.right * speed * Time.deltaTime);
+                    }
+                    if (touch.position.x > Screen.width / 2 && transform.position.x < -0.6f)
+                    {
+                        transform.Translate(Vector3.left * speed * Time.deltaTime);
+                    }
+                    break;
+                case TouchPhase.Ended:
+                    break;
+            }
         }
     }
     private void OnCollisionEnter(Collision collision)

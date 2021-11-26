@@ -46,7 +46,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4241140192883699582
 Transform:
   m_ObjectHideFlags: 0
@@ -395,8 +395,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.6426735, y: 2.8659737, z: 1}
-  m_Center: {x: -0.127182, y: 1.4988476, z: -0}
+  m_Size: {x: 1.2253134, y: 2.8659737, z: 1}
+  m_Center: {x: -0.10681927, y: 1.4988476, z: -0}
 --- !u!95 &4665540770695929718
 Animator:
   serializedVersion: 3
@@ -429,7 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
-  anim: {fileID: 0}
+  anim: {fileID: 4665540770695929718}
   panel: {fileID: 0}
 --- !u!1 &6012566528875057820
 GameObject:
@@ -477,7 +477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7931099367977454662
 Transform:
   m_ObjectHideFlags: 0
@@ -812,7 +812,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8160007157836220292
 Transform:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     Rigidbody rg;
     public Animator anim;
     public GameObject panel;
+    
   
 
     private GameObject LipsColor1;
@@ -39,7 +40,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (!IsHitting)
         {
-            rg.AddForce(Vector3.forward * 35 * Time.deltaTime,ForceMode.Acceleration);
+            rg.AddForce(Vector3.forward * 50 * Time.deltaTime,ForceMode.Force);
         }
         horizontal = Input.GetAxisRaw("Horizontal");
         if(horizontal<0)
@@ -58,23 +59,26 @@ public class PlayerManager : MonoBehaviour
             panel.SetActive(true);
             gameObject.SetActive(false);
         }
-        if (collision.gameObject.tag == "Finish")
+        if (collision.gameObject.tag == "Wall")
         {
             StartCoroutine(HitMe());
+            
+
         }
         if (collision.gameObject.tag == "Lips")
         {
           
             if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
             {
-                GameManager.Instance.linkedPlayers.Add(collision.gameObject.transform);
-                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.linkedPlayers.Count * 2f);
-                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.linkedPlayers.Count * 0.1f;
+                GameManager.Instance.LinkedPlayers.Add(collision.gameObject.transform);
+                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 2f);
+                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
                 collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
                 collision.gameObject.GetComponent<Animator>().SetBool("run", true);
             }
 
         }
+
        
     }
 
@@ -82,7 +86,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.gameObject.tag == "Gate")
         {
-            Debug.Log("test");
+           
 
             if (LipsColor1.activeSelf)
             {
@@ -119,4 +123,5 @@ public class PlayerManager : MonoBehaviour
           anim.SetBool("Hit", IsHitting);
 
     }
+  
 }

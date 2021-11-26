@@ -38,8 +38,10 @@ public class PlayerManager : MonoBehaviour
 #endif
 #if PLATFORM_ANDROID
         Debug.Log("aaa");
-        PlayerInputAd();
+        //PlayerInputAd();
 #endif
+
+        PlayerInputAd();
     }
     public void PlayerInput()
     {
@@ -79,6 +81,23 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
         }
+
+        int i = 0;
+       
+       /* while (i < Input.touchCount)
+        {
+            if (Input.GetTouch(i).position.x > Screen.width / 2)
+            {
+                //move right
+                transform.Translate(Vector3.right * speed * Time.deltaTime);
+            }
+            if (Input.GetTouch(i).position.x < Screen.width / 2)
+            {
+                //move left
+                transform.Translate(Vector3.left * speed * Time.deltaTime);
+            }
+            ++i;
+        }*/
     }
     private void OnCollisionEnter(Collision collision)
     {

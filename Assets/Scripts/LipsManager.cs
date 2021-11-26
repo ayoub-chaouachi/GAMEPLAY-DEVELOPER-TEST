@@ -8,14 +8,23 @@ public class LipsManager : MonoBehaviour
     public Vector3 offset;
     public float smooth;
     public bool isCollactable;
-    private float velocity = 0;
+    public GameObject panel;
     public Animator anim;
-    
+
+    private GameObject LipsColor1;
+    private GameObject LipsColor2;
+    private GameObject LipsColor3;
+    private GameObject LipsColor4;
+    private float velocity = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         isCollactable = true;
+        LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
+        LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
+        LipsColor3 = transform.GetChild(4).GetChild(3).gameObject;
+        LipsColor4 = transform.GetChild(4).GetChild(4).gameObject;
     }
 
     // Update is called once per frame
@@ -33,6 +42,11 @@ public class LipsManager : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.tag == "Respawn")
+        {
+            panel.SetActive(true);
+            gameObject.SetActive(false);
+        }
         if (collision.gameObject.tag == "Lips")
         {
             if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
@@ -41,10 +55,44 @@ public class LipsManager : MonoBehaviour
                 collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.linkedPlayers.Count * 2f);
                 collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.linkedPlayers.Count * 0.1f;
                 collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
-                Debug.Log("Collect");
+               
                 anim.SetBool("run", true);
             }
 
         }
+
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.gameObject.tag == "Gate")
+        {
+            Debug.Log("test");
+
+            if (LipsColor1.activeSelf)
+            {
+                LipsColor1.SetActive(false);
+                LipsColor2.SetActive(true);
+                return;
+            }
+            if (LipsColor2.activeSelf)
+            {
+                LipsColor2.SetActive(false);
+                LipsColor3.SetActive(true);
+                return;
+
+            }
+            if (LipsColor3.activeSelf)
+            {
+                LipsColor3.SetActive(false);
+                LipsColor4.SetActive(true);
+                return;
+
+            }
+        }
+    }
+
+
+
 }

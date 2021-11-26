@@ -8,20 +8,39 @@ public class PlayerManager : MonoBehaviour
     float horizontal;
     Rigidbody rg;
     public Animator anim;
-    // Start is called before the first frame update
+    public GameObject panel;
+  
+
+    private GameObject LipsColor1;
+    private GameObject LipsColor2;
+    private GameObject LipsColor3;
+    private GameObject LipsColor4;
+
+    private bool IsHitting;
     void Start()
     {
         rg = GetComponent<Rigidbody>();
+        
+
+        LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
+        LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
+        LipsColor3 = transform.GetChild(4).GetChild(3).gameObject;
+        LipsColor4 = transform.GetChild(4).GetChild(4).gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
-        rg.AddForce(Vector3.forward * 25 * Time.deltaTime);
+        
+       
         PlayerInput();
     }
     public void PlayerInput()
     {
+        if (!IsHitting)
+        {
+            rg.AddForce(Vector3.forward * 35 * Time.deltaTime,ForceMode.Acceleration);
+        }
         horizontal = Input.GetAxisRaw("Horizontal");
         if(horizontal<0)
         {
@@ -34,18 +53,70 @@ public class PlayerManager : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
+       if (collision.gameObject.tag == "Respawn")
+        {
+            panel.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        if (collision.gameObject.tag == "Finish")
+        {
+            StartCoroutine(HitMe());
+        }
         if (collision.gameObject.tag == "Lips")
         {
-            Debug.Log("qqq");
+          
             if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
             {
                 GameManager.Instance.linkedPlayers.Add(collision.gameObject.transform);
                 collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.linkedPlayers.Count * 2f);
                 collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.linkedPlayers.Count * 0.1f;
                 collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
-                anim.SetBool("run", true);
+                collision.gameObject.GetComponent<Animator>().SetBool("run", true);
             }
 
         }
+       
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Gate")
+        {
+            Debug.Log("test");
+
+            if (LipsColor1.activeSelf)
+            {
+                LipsColor1.SetActive(false);
+                LipsColor2.SetActive(true);
+                return;
+            }
+            if (LipsColor2.activeSelf)
+            {
+                LipsColor2.SetActive(false);
+                LipsColor3.SetActive(true);
+                return;
+
+            }
+            if (LipsColor3.activeSelf)
+            {
+                LipsColor3.SetActive(false);
+                LipsColor4.SetActive(true);
+                return;
+
+            }
+        }
+    }
+
+    IEnumerator HitMe()
+    {
+          IsHitting = true;
+          anim.SetBool("Hit", IsHitting);
+          rg.AddForce(Vector3.back * 100 * Time.deltaTime, ForceMode.Impulse);
+          yield return new WaitForSeconds(0.75f);
+          IsHitting = false;
+        rg.AddForce(Vector3.forward * 10 * Time.deltaTime);
+        yield return new WaitForSeconds(1.25f);
+          anim.SetBool("Hit", IsHitting);
+
     }
 }

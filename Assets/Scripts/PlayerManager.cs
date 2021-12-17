@@ -13,36 +13,21 @@ public class PlayerManager : MonoBehaviour
     public GameObject panel;
     public static PlayerManager instance;
     public GameObject[] prefabs;
-    
-
-
-
     private Vector3 lastVelocity;
-   // private bool IsHitting;
-
     void Start()
 
     {
         anim = GetComponent<Animator>();
-
         Lips = GetComponent<LipsManager>();
         rg = GetComponent<Rigidbody>();
         instance = this;
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-#if UNITY_EDITOR
-        PlayerInput();
-#endif
-#if PLATFORM_ANDROID
-        Debug.Log("aaa");
-        //PlayerInputAd();
-#endif
 
+        PlayerInput();
         PlayerInputAd();
     }
     public void PlayerInput()
@@ -69,12 +54,12 @@ public class PlayerManager : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             switch (touch.phase)
             {
-                case TouchPhase.Began:
-                    if (touch.position.x < Screen.width / 2 && transform.position.x > -9f)
+                case TouchPhase.Stationary:
+                    if (touch.position.x < Screen.width / 2 && transform.position.x > -11f)
                     {
                         transform.Translate(Vector3.right * speed * Time.deltaTime);
                     }
-                    if (touch.position.x > Screen.width / 2 && transform.position.x < 1f)
+                    if (touch.position.x > Screen.width / 2 && transform.position.x < 3f)
                     {
                         transform.Translate(Vector3.left * speed * Time.deltaTime);
                     }
@@ -93,14 +78,7 @@ public class PlayerManager : MonoBehaviour
             panel.SetActive(true);
             gameObject.SetActive(false);
         }
-        if (collision.gameObject.tag == "Wall")
-        {
-            // StartCoroutine(HitMe());
-            
-
-
-
-        }
+       
         if (collision.gameObject.tag == "Lips")
         {
             collision.gameObject.GetComponent<Animator>().SetBool("bounce", true);

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Transform target;
-    public Transform camPos;
-    public Vector3 offset;
-    public float smooth = 0.3f;
+    [SerializeField] Transform target;
+    [SerializeField] Transform camPos;
+    [SerializeField] Vector3 offset;
+    [SerializeField] float smooth = 0.3f;
 
-    Vector3 velocity;
+    private Vector3 velocity;
 
     // Start is called before the first frame update
     void Start()

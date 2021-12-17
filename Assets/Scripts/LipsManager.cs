@@ -17,12 +17,9 @@ public class LipsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         isCollactable = true;
         anim = GetComponent<Animator>();
-       
-        
-       // rend.enabled = true;
+     
     }
 
     // Update is called once per frame
@@ -79,8 +76,7 @@ public class LipsManager : MonoBehaviour
         }
         
     }
-
-    private void OnTriggerEnter(Collider other)
+      private void OnTriggerEnter(Collider other)
     {
 
         if (other.gameObject.tag == "Gate")

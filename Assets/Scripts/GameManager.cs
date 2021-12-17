@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
     public List<Transform> LinkedPlayers;
     public float detachRange;
     int levelIndex;
+    
 
-   
     // Start is called before the first frame update
     void Start()
     {
@@ -42,33 +42,37 @@ public class GameManager : MonoBehaviour
         return levelIndex;
     }
 
-    /*public void detachFromBody(Transform transformObj)
+    public void detachFromBody(Transform transformObj)
     {
         List<Transform> objectToRemove = new List<Transform>(LinkedPlayers.GetRange(LinkedPlayers.IndexOf(transformObj), LinkedPlayers.Count - LinkedPlayers.IndexOf(transformObj)));
-        //make them collectable
+        LinkedPlayers.RemoveRange(LinkedPlayers.IndexOf(transformObj), LinkedPlayers.Count - LinkedPlayers.IndexOf(transformObj));
         foreach (Transform t in objectToRemove)
         {
             t.gameObject.GetComponent<LipsManager>().isCollactable = true;
-            //DropToRAndom(t); this method is suppose to handle the lips parts animation whenever they are hit with an enemy
-            // but it doesn't work as expected
-        }
+            t.gameObject.GetComponent<Animator>().SetBool("run", false);
+            t.gameObject.GetComponent<Animator>().SetBool("bounce", false);
+            DropToRAndom(t);
 
-        LinkedPlayers.RemoveRange(LinkedPlayers.IndexOf(transformObj), LinkedPlayers.Count - LinkedPlayers.IndexOf(transformObj));
-    }*/
-    //public void DropToRAndom(Transform t)
-    //{
-    //    Vector3 randomPos = UnityEngine.Random.insideUnitSphere * detachRange;
-    //    Vector3 fixedPos = new Vector3(randomPos.x, 2f, randomPos.z);
-    //    t.position = fixedPos;
-    //}
+        }
+       
+    }
+    public void DropToRAndom(Transform t)
+    {
+       int randomx = Random.Range(3, -11);
+        int randomz = Random.Range(4, 20);
+        Vector3 fixedPos = new Vector3(randomx, t.transform.position.y, (t.transform.position.z+randomz));
+        t.position = fixedPos;
+    }
     public void DestroyObject(Transform t)
     {
-        List<Transform> objectToDestroy = new List<Transform>(LinkedPlayers.GetRange(LinkedPlayers.IndexOf(t), LinkedPlayers.Count - LinkedPlayers.IndexOf(t)));
-        LinkedPlayers.RemoveRange(LinkedPlayers.IndexOf(t), LinkedPlayers.Count - LinkedPlayers.IndexOf(t));
-        foreach(Transform tran in objectToDestroy)
+        List<Transform> objectToDestroy = new List<Transform>(LinkedPlayers.GetRange((LinkedPlayers.IndexOf(t)), LinkedPlayers.Count - (LinkedPlayers.IndexOf(t))));
+        LinkedPlayers.RemoveRange((LinkedPlayers.IndexOf(t) ), LinkedPlayers.Count - (LinkedPlayers.IndexOf(t)));
+        foreach (Transform tran in objectToDestroy)
         {
             Destroy(tran.gameObject);
+            
         }
+       
     }
 
 }

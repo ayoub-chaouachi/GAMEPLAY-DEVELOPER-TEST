@@ -4,30 +4,32 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public float speed = 2f;
+    [SerializeField] float speedRL = 6f;
+    [SerializeField] float speed = 10f;
     float horizontal;
     Rigidbody rg;
+    LipsManager Lips;
     public Animator anim;
     public GameObject panel;
     public static PlayerManager instance;
+    public GameObject[] prefabs;
     
-  
 
-    private GameObject LipsColor1;
-    private GameObject LipsColor2;
-    private GameObject LipsColor3;
-    private GameObject LipsColor4;
 
-    private bool IsHitting;
+
+    private Vector3 lastVelocity;
+   // private bool IsHitting;
+
     void Start()
+
     {
+        anim = GetComponent<Animator>();
+
+        Lips = GetComponent<LipsManager>();
         rg = GetComponent<Rigidbody>();
         instance = this;
 
-        LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
-        LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
-        LipsColor3 = transform.GetChild(4).GetChild(3).gameObject;
-        LipsColor4 = transform.GetChild(4).GetChild(4).gameObject;
+
     }
 
     // Update is called once per frame
@@ -46,18 +48,18 @@ public class PlayerManager : MonoBehaviour
     public void PlayerInput()
     {
 
-        if (!IsHitting)
-        {
-            rg.AddForce(Vector3.forward * 50 * Time.deltaTime,ForceMode.Acceleration);
-        }
+
+       
+        transform.Translate(-Vector3.forward * speed * Time.deltaTime);
+            
         horizontal = Input.GetAxisRaw("Horizontal");
-        if(horizontal<0 && transform.position.x>-7f)
+        if (horizontal < 0 && transform.position.x > -11f)
         {
-            transform.Translate(Vector3.right * speed * Time.deltaTime);
+            transform.Translate(Vector3.right * speedRL * Time.deltaTime);
         }
-        if(horizontal>0 && transform.position.x<-0.6f )
+        if (horizontal > 0 && transform.position.x < 3f)
         {
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
+            transform.Translate(Vector3.left * speedRL * Time.deltaTime);
         }
     }
     public void PlayerInputAd()
@@ -68,11 +70,11 @@ public class PlayerManager : MonoBehaviour
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    if(touch.position.x< Screen.width/2 && transform.position.x > -7f)
+                    if (touch.position.x < Screen.width / 2 && transform.position.x > -9f)
                     {
                         transform.Translate(Vector3.right * speed * Time.deltaTime);
                     }
-                    if (touch.position.x > Screen.width / 2 && transform.position.x < -0.6f)
+                    if (touch.position.x > Screen.width / 2 && transform.position.x < 1f)
                     {
                         transform.Translate(Vector3.left * speed * Time.deltaTime);
                     }
@@ -82,51 +84,42 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        int i = 0;
-       
-       /* while (i < Input.touchCount)
-        {
-            if (Input.GetTouch(i).position.x > Screen.width / 2)
-            {
-                //move right
-                transform.Translate(Vector3.right * speed * Time.deltaTime);
-            }
-            if (Input.GetTouch(i).position.x < Screen.width / 2)
-            {
-                //move left
-                transform.Translate(Vector3.left * speed * Time.deltaTime);
-            }
-            ++i;
-        }*/
+
     }
     private void OnCollisionEnter(Collision collision)
     {
-       if (collision.gameObject.tag == "Respawn")
+        if (collision.gameObject.tag == "Respawn")
         {
             panel.SetActive(true);
             gameObject.SetActive(false);
         }
         if (collision.gameObject.tag == "Wall")
         {
-            StartCoroutine(HitMe());
+            // StartCoroutine(HitMe());
             
+
+
 
         }
         if (collision.gameObject.tag == "Lips")
         {
-          
+            collision.gameObject.GetComponent<Animator>().SetBool("bounce", true);
             if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
             {
-                GameManager.Instance.LinkedPlayers.Add(collision.gameObject.transform);
-                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 2f);
-                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
-                collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
                 collision.gameObject.GetComponent<Animator>().SetBool("run", true);
+                GameManager.Instance.LinkedPlayers.Add(collision.gameObject.transform);
+                LipsManager lips = collision.gameObject.GetComponent<LipsManager>();
+                lips.offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 1f);
+                lips.smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
+                lips.isCollactable = false;
+
+                
+
             }
 
         }
 
-       
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -134,41 +127,26 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.tag == "Gate")
         {
            
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                if (i == prefabs.Length - 1)
+                {
+                    break;
+                }
+                if (prefabs[i].activeSelf)
+                {
+                    prefabs[i].SetActive(false);
+                    prefabs[i + 1].SetActive(true);
+                    
+                    return;
+                }
 
-            if (LipsColor1.activeSelf)
-            {
-                LipsColor1.SetActive(false);
-                LipsColor2.SetActive(true);
-                return;
-            }
-            if (LipsColor2.activeSelf)
-            {
-                LipsColor2.SetActive(false);
-                LipsColor3.SetActive(true);
-                return;
-
-            }
-            if (LipsColor3.activeSelf)
-            {
-                LipsColor3.SetActive(false);
-                LipsColor4.SetActive(true);
-                return;
 
             }
+
         }
-    }
-
-    IEnumerator HitMe()
-    {
-          IsHitting = true;
-          anim.SetBool("Hit", IsHitting);
-          rg.AddForce(Vector3.back * 100 * Time.deltaTime, ForceMode.Impulse);
-          yield return new WaitForSeconds(0.75f);
-          IsHitting = false;
-        rg.AddForce(Vector3.forward * 10 * Time.deltaTime);
-        yield return new WaitForSeconds(1.25f);
-          anim.SetBool("Hit", IsHitting);
 
     }
-  
+    
+    
 }

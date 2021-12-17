@@ -6,16 +6,16 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public Text level;
+    [SerializeField] Text level;
     // Start is called before the first frame update
     void Start()
     {
-        
+        level.text = "" + GameManager.Instance.getLevelIndex();
     }
 
     // Update is called once per frame
     void Update()
     {
-        level.text = "" + GameManager.Instance.getLevelIndex();
+        
     }
 }

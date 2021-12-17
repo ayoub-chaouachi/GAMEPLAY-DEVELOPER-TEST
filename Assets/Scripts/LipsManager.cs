@@ -2,31 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class LipsManager : MonoBehaviour
 {
-    public Transform target;
+    [SerializeField] Transform target;
+    [SerializeField] GameObject panel;
     public Vector3 offset;
     public float smooth;
     public bool isCollactable;
-    public GameObject panel;
-    public Animator anim;
-  
-
-    private GameObject LipsColor1;
-    private GameObject LipsColor2;
-    private GameObject LipsColor3;
-    private GameObject LipsColor4;
+    public static LipsManager instance;
+    public GameObject[] prefabs;
     private float velocity = 0;
-
+    Animator anim;
     // Start is called before the first frame update
     void Start()
     {
+
         isCollactable = true;
-    
-        LipsColor1 = transform.GetChild(4).GetChild(1).gameObject;
-        LipsColor2 = transform.GetChild(4).GetChild(2).gameObject;
-        LipsColor3 = transform.GetChild(4).GetChild(3).gameObject;
-        LipsColor4 = transform.GetChild(4).GetChild(4).gameObject;
+        anim = GetComponent<Animator>();
+       
+        
+       // rend.enabled = true;
     }
 
     // Update is called once per frame
@@ -39,7 +35,7 @@ public class LipsManager : MonoBehaviour
         if (!isCollactable)
         {
             Vector3 targetPosition = target.position + offset;
-            transform.position = new Vector3 (Mathf.SmoothDamp(transform.position.x, targetPosition.x, ref velocity, smooth), 0.57f, targetPosition.z);
+            transform.position = new Vector3(Mathf.SmoothDamp(transform.position.x, targetPosition.x, ref velocity, smooth), targetPosition.y, targetPosition.z);
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -51,26 +47,37 @@ public class LipsManager : MonoBehaviour
         }
         if (collision.gameObject.tag == "Lips")
         {
-            if (collision.gameObject.GetComponent<LipsManager>().isCollactable)
+            
+            LipsManager Lips = collision.gameObject.GetComponent<LipsManager>();
+            anim.SetBool("bounce", true);
+            if (Lips.isCollactable)
             {
+                
+                Lips.anim.SetBool("run", true);
+                
                 GameManager.Instance.LinkedPlayers.Add(collision.gameObject.transform);
-                collision.gameObject.GetComponent<LipsManager>().offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 2f);
-                collision.gameObject.GetComponent<LipsManager>().smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
-                collision.gameObject.GetComponent<LipsManager>().isCollactable = false;
-               
-                anim.SetBool("run", true);
-            }
+                Lips.offset = new Vector3(0, 0, GameManager.Instance.LinkedPlayers.Count * 1f);
+                Lips.smooth = GameManager.Instance.LinkedPlayers.Count * 0.1f;
+                Lips.isCollactable = false;
+                
 
+
+            }
+            
+            
         }
-        /*if (collision.gameObject.tag == "Enemey")
+        if (collision.gameObject.tag == "Enemey")
         {
             GameManager.Instance.detachFromBody(this.transform);
-        }*/
+
+        }
         if (collision.gameObject.tag == "Wall")
         {
             GameManager.Instance.DestroyObject(this.transform);
-        }
 
+
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -78,32 +85,28 @@ public class LipsManager : MonoBehaviour
 
         if (other.gameObject.tag == "Gate")
         {
-           
-
-            if (LipsColor1.activeSelf)
+            
+            for (int i = 0; i < prefabs.Length; i++)
             {
-                LipsColor1.SetActive(false);
-                LipsColor2.SetActive(true);
-                return;
-            }
-            if (LipsColor2.activeSelf)
-            {
-                LipsColor2.SetActive(false);
-                LipsColor3.SetActive(true);
-                return;
+                if (i == prefabs.Length-1)
+                {
+                    break;
+                }
+                if (prefabs[i].activeSelf)
+                 {
+                     prefabs[i].SetActive(false);
+                     prefabs[i + 1].SetActive(true);
+                     return;
+                 }
 
+                
             }
-            if (LipsColor3.activeSelf)
-            {
-                LipsColor3.SetActive(false);
-                LipsColor4.SetActive(true);
-                return;
-
-            }
+            
         }
+
+
+
+
     }
    
-
-
-
 }
